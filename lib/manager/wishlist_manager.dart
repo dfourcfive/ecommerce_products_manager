@@ -13,6 +13,9 @@ class CachwishlistItems {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Map<String, Product> tmp = Map<String, Product>();
 
+  /**
+   * get products from the cart
+   */
   Future<Map<String, Product>> getWishlistItems() async {
     final SharedPreferences pref = await _prefs;
     var keys = pref.getKeys().toList();
@@ -26,7 +29,11 @@ class CachwishlistItems {
     return tmp;
   }
 
-  Future<bool> checkIfCachedInWishlistItem(Product product) async {
+  /**
+   * Check if the product exist in the wish list
+   * return true if exist , false otherwise
+   */
+  Future<bool> exist(Product product) async {
     final SharedPreferences pref = await _prefs;
     bool result = pref.containsKey('wishlist' + product.productId);
     if (result) {
@@ -35,6 +42,9 @@ class CachwishlistItems {
       return false;
   }
 
+  /**
+   * Add product to the cart
+   */
   void addProductToWishlist(Product product) async {
     final SharedPreferences prefs = await _prefs;
     final result = prefs.get('wishlist' + product.productId);
@@ -50,11 +60,17 @@ class CachwishlistItems {
     }
   }
 
+  /**
+   * Remove a product from the wish list
+   */
   void deleteItemFromWishlist(Product product) async {
     final SharedPreferences pref = await _prefs;
     pref.remove('wishlist' + product.productId);
   }
 
+  /**
+   * remove all products from the wish list
+   */
   Future<void> clearWishlist() async {
     final SharedPreferences prefs = await _prefs;
     var keys = prefs.getKeys().toList();

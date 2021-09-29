@@ -13,7 +13,10 @@ class CachcartItems {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Map<String, Product> tmp = Map<String, Product>();
 
-  Future<Map<String, Product>> getCartItems() async {
+  /**
+   * get products from the cart
+   */
+  Future<List<Product>> getCartItems() async {
     final SharedPreferences pref = await _prefs;
     var keys = pref.getKeys().toList();
 
@@ -23,10 +26,15 @@ class CachcartItems {
             new Product.fromJson(jsonDecode(pref.getString(element)));
       }
     });
-    return tmp;
+    var products = tmp.values;
+    return products;
   }
 
-  Future<bool> checkIfCachedInCartItem(Product product) async {
+  /**
+   * Check if the product exist in the cart
+   * return true if exist , false otherwise
+   */
+  Future<bool> exist(Product product) async {
     final SharedPreferences pref = await _prefs;
     bool result = pref.containsKey('cart' + product.productId);
     if (result) {
@@ -35,6 +43,9 @@ class CachcartItems {
       return false;
   }
 
+  /**
+   * Add product to the cart
+   */
   void addProductToCart(Product product) async {
     final SharedPreferences prefs = await _prefs;
     final result = prefs.get('cart' + product.productId);
@@ -49,11 +60,17 @@ class CachcartItems {
     }
   }
 
+  /**
+   * Remove a product from the cart
+   */
   void deleteItemFromCart(Product product) async {
     final SharedPreferences pref = await _prefs;
     pref.remove('cart' + product.productId);
   }
 
+  /**
+   * remove all products from the cart
+   */
   Future<void> clearCart() async {
     final SharedPreferences prefs = await _prefs;
     var keys = prefs.getKeys().toList();
@@ -64,9 +81,14 @@ class CachcartItems {
     });
   }
 
+  /**
+   * Returns Total price of the products in the cart
+   * 
+   * this method calculate the total price of products 
+   * accordingly to their quantites and promo
+   */
   Future<double> getTotalPrice() async {
-    var cartItems = await getCartItems();
-    var products = cartItems.values;
+    var products = await getCartItems();
     var totalPrice = 0.0;
     products.forEach((element) {
       totalPrice = totalPrice +
