@@ -1,6 +1,6 @@
 # ecommerce_products_manager
 
-ecommerce_products_manager is a dart/flutter package for managin and caching products for the purpose
+ecommerce_products_manager is a dart/flutter package for managing products for the purpose
 of dealing with carts and wishlists
 
 link to pub.dev:
