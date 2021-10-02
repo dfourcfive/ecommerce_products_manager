@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:ecommerce_products_manager/models/product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CachcartItems {
-  static final CachcartItems _singleton = CachcartItems._internal();
-  factory CachcartItems() {
+class CartManager {
+  static final CartManager _singleton = CartManager._internal();
+  factory CartManager() {
     return _singleton;
   }
-  CachcartItems._internal();
+  CartManager._internal();
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Map<String, Product> tmp = Map<String, Product>();
@@ -46,7 +46,7 @@ class CachcartItems {
   /**
    * Add product to the cart
    */
-  void addProductToCart(Product product) async {
+  Future<void> addProductToCart(Product product) async {
     final SharedPreferences prefs = await _prefs;
     final result = prefs.get('cart' + product.productId);
 
@@ -62,10 +62,18 @@ class CachcartItems {
 
   /**
    * Remove a product from the cart
+   * return true if removed successfully
+   * return false otherwise
    */
-  void deleteItemFromCart(Product product) async {
-    final SharedPreferences pref = await _prefs;
-    pref.remove('cart' + product.productId);
+  Future<bool> deleteItemFromCart(Product product) async {
+    bool productExist = await exist(product);
+    if (productExist) {
+      final SharedPreferences pref = await _prefs;
+      await pref.remove('cart' + product.productId);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**

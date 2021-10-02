@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:ecommerce_products_manager/models/product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CachwishlistItems {
-  static final CachwishlistItems _singleton = CachwishlistItems._internal();
-  factory CachwishlistItems() {
+class WishListManager {
+  static final WishListManager _singleton = WishListManager._internal();
+  factory WishListManager() {
     return _singleton;
   }
-  CachwishlistItems._internal();
+  WishListManager._internal();
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Map<String, Product> tmp = Map<String, Product>();
@@ -61,11 +61,19 @@ class CachwishlistItems {
   }
 
   /**
-   * Remove a product from the wish list
+   * Remove a product from the wish List
+   * return true if removed succesfuly
+   * return false otherwise
    */
-  void deleteItemFromWishlist(Product product) async {
-    final SharedPreferences pref = await _prefs;
-    pref.remove('wishlist' + product.productId);
+  Future<bool> deleteItemFromWishlist(Product product) async {
+    bool productExist = await exist(product);
+    if (productExist) {
+      final SharedPreferences pref = await _prefs;
+      await pref.remove('cart' + product.productId);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
